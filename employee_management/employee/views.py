@@ -12,7 +12,12 @@ class ViewEmployee(View):
             'total': employees.count()
         }
         return render(request, 'employee.html', context)
-    
+
+class ViewLayout(View):
+
+    def get(self, request):
+        return render(request, 'layout.html')
+
 class ViewPosition(View):
 
     def get(self, request):

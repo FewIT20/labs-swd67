@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'employee',
 ]
 
@@ -51,6 +52,13 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'employee_management.urls'
+
+import os
+SETTINGS_PATH = os.path.dirname(os.path.dirname(__file__))
+
+TEMPLATE_DIRS = (
+    os.path.join(SETTINGS_PATH, 'templates'),
+)
 
 TEMPLATES = [
     {
@@ -77,7 +85,7 @@ WSGI_APPLICATION = 'employee_management.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "employee_db",
+        "NAME": "employee_db_v2",
         "USER": "myuser",
         "PASSWORD": "sk12345",
         "HOST": "127.0.0.1",
@@ -85,6 +93,12 @@ DATABASES = {
     }
 }
 
+STATIC_URL = 'static/'
+STATIC_URL = "static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
