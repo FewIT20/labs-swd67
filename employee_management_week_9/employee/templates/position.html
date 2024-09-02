@@ -1,0 +1,18 @@
+{%extends "layout.html"%}
+{%block title%}Position{%endblock%}
+{%block head%}
+    <h1>Position</h1>
+{%endblock%}
+{%block content%}
+    {% for position in positions %}
+    <div class="itemGroup">
+        <div class="item">
+            <!-- position id และ ชื่อตำแหน่ง -->
+            <div>{{position.id}}. {{position.name}}</div>
+
+            <!-- จำนวนพนักงานทั้งหมด -->
+            <div class="action">{{position.employee_total}} People</div>
+        </div>
+    </div>
+    {% endfor %}
+{%endblock%}
