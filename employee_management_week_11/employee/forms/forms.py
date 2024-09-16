@@ -1,10 +1,17 @@
 from django import forms
-from employee.models import Employee, EmployeeAddress, Department, Position, Project  # Only import models
+from employee.models import Employee, Project
+from company.models import Position, Department
 
 class EmployeeForm(forms.ModelForm):
+    position = forms.ModelChoiceField(queryset=Position.objects.all(), required=False, label="Position")
+    location = forms.CharField(widget=forms.TextInput(attrs={"cols": 30, "rows": 3}))
+    district = forms.CharField(max_length=100)
+    province = forms.CharField(max_length=100)
+    postal_code = forms.CharField(max_length=15)
+
     class Meta:
         model = Employee
-        fields = ['first_name', 'last_name', 'gender', 'birth_date', 'hire_date', 'salary', 'position']
+        fields = ['first_name', 'last_name', 'gender', 'birth_date', 'hire_date', 'salary', 'position', 'location', 'district', 'province', 'postal_code']
         widgets = {
             'birth_date': forms.DateInput(attrs={'type': 'date'}),
             'hire_date': forms.DateInput(attrs={'type': 'date'}),

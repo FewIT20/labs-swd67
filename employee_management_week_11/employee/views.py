@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
-from .models import Employee, Position, Project
+from .models import Employee, Project, EmployeeAddress
+from company.models import Position, Department
 from .forms import forms
 from django.views import View
 from django.http import JsonResponse, HttpResponse
@@ -39,6 +40,7 @@ class UpdateProject(View):
         return render(request, 'project_details.html', context)
 
 class ViewCreateEmployee(View):
+    from django.db import transaction
 
     def get(self, request):
         context = {
@@ -46,6 +48,7 @@ class ViewCreateEmployee(View):
         }
         return render(request, 'employee_form.html', context)
     
+    @transaction.atomic
     def post(self, request):
         form = forms.EmployeeForm(request.POST)
         if form.is_valid():
@@ -57,9 +60,17 @@ class ViewCreateEmployee(View):
                 birth_date=data["birth_date"],
                 hire_date=data["hire_date"],
                 salary=data["salary"],
-                position=data["position"]
+                position_id=data["position"].id,
             )
             employee.save()
+            address = EmployeeAddress(
+                employee=employee,
+                location=data["location"],
+                district=data["district"],
+                province=data["province"],
+                postal_code=data["postal_code"]
+            )
+            address.save()
             return redirect("employee")  # Redirect to the desired page after successful submission
         context = {
             'forms': form 
@@ -70,6 +81,17 @@ class ViewEmployee(View):
 
     def get(self, request):
         employees = Employee.objects.all().order_by("-hire_date")
+        for employee in employees:
+            try:
+                employee.position = Position.objects.get(pk=employee.position_id)
+            except Position.DoesNotExist:
+                employee.position = None # ถ้าไม่มีให้ Set None
+        for employee in employees:
+            address = EmployeeAddress.objects.filter(employee_id=employee.id).first()
+            if address:
+                employee.address = address
+            else:
+                employee.address = None # ถ้าไม่มีให้ Set None 
         context = {
             'employees': employees,
             'total': employees.count()

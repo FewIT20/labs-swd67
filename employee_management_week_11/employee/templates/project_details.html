@@ -1,0 +1,38 @@
+{%extends 'layout.html'%}
+{%block title%}Project{%endblock title%}
+{%block head%}
+    <h1>Project Detail</h1>
+{%endblock head%}
+{%block content%}
+    <form class="form" action="{% url 'update_project' id=project.id %}" method="post" style="margin-top: 15px;">
+        {% csrf_token %}
+        {{ forms }}
+        <button type="submit">Save</button>
+    </form>
+    <div>
+        <div class="head">
+            <h2>Employee in this project</h2>
+            <div class="action">
+                <div id="add-staff">
+                    <input type="text" name="emp_id" id="input-add-staff" placeholder="EMPLOYEE ID">
+                    <button type="submit" onclick="addStaff({{ project.id }}, '{{ csrf_token }}')">ADD</button>
+                </div>
+            </div>
+        </div>
+        {% for staff in staffs %}
+        <div class="itemGroup">
+            <div class="item">
+                <div>{{staff.id}}. {{staff.get_full_name}}</div>
+                <div>{{staff.position.name}}</div>
+                <div class="action">
+                    <button type="submit" class="delete" onclick="removeStaff({{ project.id }}, {{ staff.id }}, '{{ csrf_token }}')">Kick this Staff</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{%endblock content%}
+{% comment %} {%block script%}
+    {% load static %}
+    <script src="{% static 'staff.js' %}"></script>
+{%endblock script%} {% endcomment %}

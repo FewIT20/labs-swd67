@@ -5,7 +5,7 @@ function deleteProject(pro_id, csrf_token){
     // กำหนด path ให้ถูกต้อง
     fetch(`/project/${pro_id}/`, {
         method: 'DELETE',
-        headers: {ไ
+        headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrf_token
         },

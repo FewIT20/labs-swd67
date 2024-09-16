@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'employee',
+    'company',
 ]
 
 MIDDLEWARE = [
@@ -82,10 +83,21 @@ WSGI_APPLICATION = 'employee_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+DATABASE_ROUTERS = ["company.routers.CompanyRouter"]
+
 DATABASES = {
+    # "default": {},
     "default": {
+        "NAME": "employee_db_v4",
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "employee_db_v3",
+        "USER": "myuser",
+        "PASSWORD": "sk12345",
+        "HOST": "127.0.0.1",
+        "PORT": "7159",
+    },
+    "db2": {
+        "NAME": "employee_db_company_v4",
+        "ENGINE": "django.db.backends.postgresql",
         "USER": "myuser",
         "PASSWORD": "sk12345",
         "HOST": "127.0.0.1",
@@ -93,7 +105,6 @@ DATABASES = {
     }
 }
 
-STATIC_URL = 'static/'
 STATIC_URL = "static/"
 
 STATICFILES_DIRS = [

@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% load humanize %} 
+{% block title %}Employee{% endblock %}
+{% block head %}
+<h1>Employee</h1>
+    {% if total %}
+        <h1>Total {{ total }} People</h1>
+    {% endif %}
+</div>
+{% endblock %}
+{% block content%}
+<div class="pt-5">
+    <a href="{% url 'create_employee' %}"><button class="newemp">New Employee</button></a>
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Genger</th>
+            <th>Birth Date</th>
+            <th>Hire Date</th>
+            <th>Salary</th>
+            <th>Department</th>
+            <th>Position</th>
+            <th>Location</th>
+            <th>Province</th>
+        </tr>
+    </thead>
+
+    {% for employee in employees %}
+     <tbody>
+        {% if forloop.first or forloop.last%}
+            <tr style="color: red;">
+        {% else %}
+            <tr>
+        {% endif %}
+                <td>{{employee.id}}</td> 
+                <td>{{employee.get_full_name}}</td>
+                {% if employee.gender == "M" %}
+                    <td>Male</td>
+                {% elif employee.gender == "F" %}
+                    <td>Female</td>
+                {% else %}
+                    <td>Others</td>
+                {% endif %}
+                <td>{{employee.birth_date|date:"d/m/Y"}}</td>
+                <td>{{employee.hire_date|date:"d/m/Y"}}</td>
+                <td>{{employee.salary|intcomma}}</td>
+                <td>{{employee.position.name}}</td>
+                <td>{{employee.position.department.name}}</td>
+                <td>{{employee.employeeaddress.location}}</td>
+                <td>{{employee.employeeaddress.province}}</td>
+            </tr>
+     </tbody>
+    {% empty %}
+    <tbody>
+        <tr>
+            <td colspan="8">No data</td>
+        </tr>
+    </tbody>
+    {% endfor %}
+</table>
+{%endblock%}
