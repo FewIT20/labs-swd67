@@ -81,17 +81,12 @@ class ViewEmployee(View):
 
     def get(self, request):
         employees = Employee.objects.all().order_by("-hire_date")
+
         for employee in employees:
             try:
                 employee.position = Position.objects.get(pk=employee.position_id)
             except Position.DoesNotExist:
                 employee.position = None # ถ้าไม่มีให้ Set None
-        for employee in employees:
-            address = EmployeeAddress.objects.filter(employee_id=employee.id).first()
-            if address:
-                employee.address = address
-            else:
-                employee.address = None # ถ้าไม่มีให้ Set None 
         context = {
             'employees': employees,
             'total': employees.count()
