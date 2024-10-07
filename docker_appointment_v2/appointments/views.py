@@ -1,10 +1,11 @@
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from .permissions import AppointmentsPermission
+from .permissions import AppointmentPermission
 
 class TokenAuthentication(TokenAuthentication):
     keyword = 'Bearer'
@@ -30,21 +31,15 @@ class PatientList(APIView):
 
 class AppintmentDetailList(APIView):
     authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated, AppointmentsPermission]
+    permission_classes = [IsAuthenticated, AppointmentPermission]
     
     def get(self, request, pk):
         appointments = self.get_appointment(pk)
-        if not appointments:
-            return Response({"message": "No appointments found for this doctor."})
         serializer = AppointmentSerializer(appointments)
         return Response(serializer.data)
     
     def put(self, request, pk):
         appointments = self.get_appointment(pk)
-        if not appointments:
-            return Response({"message": "No appointments found for this doctor."})
-        if appointments.created_by != request.user:
-            return Response({"message": "You do not have permission to update this appointment."}, status=403)
         serializer = UpdateAppointmentSerializer(appointments, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -53,10 +48,6 @@ class AppintmentDetailList(APIView):
     
     def patch(self, request, pk):
         appointments = self.get_appointment(pk)
-        if not appointments:
-            return Response({"message": "No appointments found for this doctor."})
-        if appointments.created_by != request.user:
-            return Response({"message": "You do not have permission to update this appointment."}, status=403)
         serializer = UpdateAppointmentSerializer(appointments, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -65,18 +56,11 @@ class AppintmentDetailList(APIView):
     
     def delete(self, request, pk):
         appointments = self.get_appointment(pk)
-        if not appointments:
-            return Response({"message": "No appointments found for this doctor."})
-        if appointments.created_by != request.user:
-            return Response({"message": "You do not have permission to delete this appointment."}, status=403)
         appointments.delete()
         return Response({"message": "Appointment deleted successfully."})
     
     def get_appointment(self, pk: int):
-        try:
-            return Appointment.objects.get(pk=pk)
-        except Appointment.DoesNotExist:
-            return None
+        return get_object_or_404(Appointment, pk=pk)  # Cleaner object retrieval with error handling
         
 
 class AppointmentList(APIView):
